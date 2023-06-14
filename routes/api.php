@@ -25,4 +25,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('plantation')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [PlantationController::class, 'index']);
+    Route::middleware('owner')->post('/', [PlantationController::class, 'store']);
 });
