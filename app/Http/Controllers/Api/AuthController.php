@@ -43,11 +43,13 @@ class AuthController extends Controller
                 'birth_date' => $request->birth_date,
                 'phone' => $request->phone,
                 'email' => $request->email,
+                'is_owner' => true,
                 'password' => Hash::make($request->password)
             ]);
 
             return response()->json([
                 'message' => 'Usuário criado com sucesso!',
+                'is_owner' => true,
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
@@ -100,6 +102,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'Usuário logado com sucesso!',
+                'is_owner' => $user->is_owner,
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 

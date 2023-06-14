@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('surname')->after('name');
+            $table->string('surname')->after('first_name');
             $table->string('phone')->unique()->after('email_verified_at');
-            $table->date('birth_date')->after('phone');
+            $table->boolean('is_owner')->default(false)->after('phone');
+            $table->date('birth_date')->after('is_owner');
         });
     }
 
@@ -24,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['surname', 'phone', 'birth_date']);
+            $table->dropColumn(['surname', 'phone', 'birth_date', 'is_owner']);
         });
     }
 };
