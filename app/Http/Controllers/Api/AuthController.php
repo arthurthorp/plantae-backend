@@ -21,7 +21,7 @@ class AuthController extends Controller
         try {
             $validateUser = Validator::make($request->all(),
             [
-                'name' => 'required',
+                'first_name' => 'required',
                 'surname' => 'required',
                 'birth_date' => 'required',
                 'phone' => 'required|unique:users,phone',
@@ -37,20 +37,29 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            $isOwner = !$request->query("plantation");
+
             $user = User::create([
-                'name' => $request->name,
+                'first_name' => $request->first_name,
                 'surname' => $request->surname,
                 'birth_date' => $request->birth_date,
                 'phone' => $request->phone,
                 'email' => $request->email,
-                'is_owner' => true,
+                'is_owner' => $isOwner,
                 'password' => Hash::make($request->password)
             ]);
 
+            if($isOwner){
+                $token = $user->createToken("API TOKEN", ['owner'])->plainTextToken;
+            }else {
+                //TODO: adicionar o usuário na plantação
+                $token = $user->createToken("API TOKEN")->plainTextToken;
+            }
+
             return response()->json([
                 'message' => 'Usuário criado com sucesso!',
-                'is_owner' => true,
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'is_owner' => !$request->query("plantation"),
+                'token' => $token
             ], 200);
 
         } catch (\Throwable $th) {
@@ -99,11 +108,16 @@ class AuthController extends Controller
                 $user = User::where('phone', $request->phone)->first();
             }
 
+            if($user->is_owner){
+                $token = $user->createToken("API TOKEN", ['owner'])->plainTextToken;
+            }else {
+                $token = $user->createToken("API TOKEN")->plainTextToken;
+            }
 
             return response()->json([
                 'message' => 'Usuário logado com sucesso!',
                 'is_owner' => $user->is_owner,
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'token' => $token
             ], 200);
 
         } catch (\Throwable $th) {
