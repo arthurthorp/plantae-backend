@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Models\Plantation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Termwind\Components\Dd;
 
 class AuthController extends Controller
 {
@@ -31,13 +33,19 @@ class AuthController extends Controller
 
             if($validateUser->fails()){
                 return response()->json([
-                    'status' => false,
-                    'message' => 'validation error',
+                    'message' => 'Campos inválidos',
                     'errors' => $validateUser->errors()
                 ], 401);
             }
 
             $isOwner = !$request->query("plantation");
+            $plantation = Plantation::find($request->query("plantation"));
+
+            if(!$isOwner && !$plantation){
+                return response()->json([
+                    'message' => 'Essa plantação não existe em nossos registros'
+                ], 400);
+            }
 
             $user = User::create([
                 'first_name' => $request->first_name,
@@ -52,7 +60,7 @@ class AuthController extends Controller
             if($isOwner){
                 $token = $user->createToken("API TOKEN", ['owner'])->plainTextToken;
             }else {
-                //TODO: adicionar o usuário na plantação
+                $user->plantations()->attach($request->query("plantation"));
                 $token = $user->createToken("API TOKEN")->plainTextToken;
             }
 
@@ -85,7 +93,7 @@ class AuthController extends Controller
 
             if($validateUser->fails() || (!isset($request->email) && !isset($request->phone))){
                 return response()->json([
-                    'message' => 'validation error',
+                    'message' => 'Campos inválidos',
                     'errors' => $validateUser->errors()
                 ], 401);
             }
