@@ -57,16 +57,18 @@ class PlantationController extends Controller
 
             $plantation->users()->attach($user->id);
 
-            return response()->json([
-                'message' => 'Plantação criada com sucesso!',
-                'object' => $plantation
-            ], 201);
+
 
         }catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
             ], 500);
         }
+
+        return response()->json([
+            'message' => 'Plantação criada com sucesso!',
+            'object' => $plantation
+        ], 201);
     }
 
     /**
@@ -94,14 +96,78 @@ class PlantationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = $request->user();
+
+        $plantation = $user->plantations()->find($id);
+
+        if(!$plantation) {
+            return response()->json([
+                'message' => "Você não possui permissão para acessar essa plantação",
+            ], 401);
+        }
+
+        try {
+            $validatePlantation = Validator::make($request->all(),
+            [
+                'name' => 'required',
+                'description' => 'required',
+                'cultivation' => 'required',
+                'planting_date' => 'required|date_format:Y-m-d',
+                'estimate_harvest_date' => 'required|date_format:Y-m-d',
+                'plantation_size' => 'required|decimal:2'
+            ]);
+
+            if($validatePlantation->fails()){
+                return response()->json([
+                    'message' => 'Campos inválidos',
+                    'errors' => $validatePlantation->errors()
+                ], 400);
+            }
+
+            $plantation->name = $request->name;
+            $plantation->description = $request->description;
+            $plantation->cultivation = $request->cultivation;
+            $plantation->planting_date = $request->planting_date;
+            $plantation->estimate_harvest_date = $request->estimate_harvest_date;
+            $plantation->plantation_size = $request->plantation_size;
+            $plantation->save();
+
+        }catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Plantação atualizada com sucesso!',
+            'object' => $plantation
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        $user = $request->user();
+
+        $plantation = $user->plantations()->find($id);
+
+        if(!$plantation) {
+            return response()->json([
+                'message' => "Você não possui permissão para acessar essa plantação",
+            ], 401);
+        }
+
+        try {
+            $user->plantations()->detach($id);
+            $plantation->delete();
+        }catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+
+        return response(null,204);
     }
 }
