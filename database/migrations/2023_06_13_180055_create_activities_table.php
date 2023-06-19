@@ -21,12 +21,12 @@ return new class extends Migration
             $table->unsignedBigInteger('charge_in')->nullable();
             $table->unsignedBigInteger('plantation_id')->onDelete('cascade');
 
-            //AGRICULTURAL_INPUT
+            //HARVEST
             $table->unsignedBigInteger('agricultural_input_id')->nullable();
             $table->float('estimate_produtivity', 8, 2)->nullable();
             $table->float('real_produtivity', 8, 2)->nullable();
 
-            //colheita
+            //AGRICULTURAL_INPUT
             $table->float('quantity_used', 8, 2)->nullable();
 
 
