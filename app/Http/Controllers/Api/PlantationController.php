@@ -160,7 +160,7 @@ class PlantationController extends Controller
         }
 
         try {
-            $user->plantations()->detach($id);
+            $plantation->users()->detach();
             $plantation->delete();
         }catch (\Throwable $th) {
             return response()->json([
