@@ -24,7 +24,7 @@ class Plantation extends Model
         'plantation_size'
     ];
 
-    public function employers(): BelongsToMany
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'plantations_users');
     }
