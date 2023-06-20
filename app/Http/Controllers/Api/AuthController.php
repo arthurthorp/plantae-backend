@@ -23,7 +23,7 @@ class AuthController extends Controller
             $validateUser = Validator::make($request->all(),
             [
                 'name' => 'required',
-                'birth_date' => 'required',
+                'birthDate' => 'required',
                 'phone' => 'required|unique:users,phone',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required'
@@ -47,7 +47,7 @@ class AuthController extends Controller
 
             $user = User::create([
                 'name' => $request->name,
-                'birth_date' => $request->birth_date,
+                'birth_date' => $request->birthDate,
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'is_owner' => $isOwner,
