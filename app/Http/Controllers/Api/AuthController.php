@@ -56,6 +56,7 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password)
             ]);
 
+
             if($isOwner){
                 $token = $user->createToken("API TOKEN", ['owner'])->plainTextToken;
             }else {
@@ -65,7 +66,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'Usuário criado com sucesso!',
-                'is_owner' => !$request->query("plantation"),
+                'isOwner' => !$request->query("plantation"),
                 'token' => $token
             ], 200);
 
@@ -123,7 +124,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'message' => 'Usuário logado com sucesso!',
-                'is_owner' => $user->is_owner,
+                'isOwner' => $user->is_owner,
                 'token' => $token
             ], 200);
 

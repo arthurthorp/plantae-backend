@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Plantation;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helpers;
 
 class PlantationController extends Controller
 {
@@ -17,7 +18,7 @@ class PlantationController extends Controller
         $user = $request->user();
 
         return response()->json([
-            'objects' => $user->plantations,
+            'objects' => Helpers::convertToCamelCase($user->plantations->toArray()),
         ], 200);
     }
 
@@ -34,9 +35,9 @@ class PlantationController extends Controller
                 'name' => 'required',
                 'description' => 'required',
                 'cultivation' => 'required',
-                'planting_date' => 'required|date_format:Y-m-d',
-                'estimate_harvest_date' => 'required|date_format:Y-m-d',
-                'plantation_size' => 'required|decimal:2'
+                'plantingDate' => 'required|date_format:Y-m-d',
+                'estimateHarvestDate' => 'required|date_format:Y-m-d',
+                'plantationSize' => 'required|decimal:2'
             ]);
 
             if($validatePlantation->fails()){
@@ -50,9 +51,9 @@ class PlantationController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'cultivation' => $request->cultivation,
-                'planting_date' => $request->planting_date,
-                'estimate_harvest_date' => $request->estimate_harvest_date,
-                'plantation_size' => $request->plantation_size
+                'planting_date' => $request->plantingDate,
+                'estimate_harvest_date' => $request->estimateHarvestDate,
+                'plantation_size' => $request->plantationSize
             ]);
 
             $plantation->users()->attach($user->id);
@@ -67,7 +68,7 @@ class PlantationController extends Controller
 
         return response()->json([
             'message' => 'Plantação criada com sucesso!',
-            'object' => $plantation
+            'object' => Helpers::convertToCamelCase($plantation->toArray())
         ], 201);
     }
 
@@ -87,7 +88,7 @@ class PlantationController extends Controller
         }
 
         return response()->json([
-            'object' => $plantation,
+            'object' => Helpers::convertToCamelCase($plantation->toArray()),
         ], 200);
     }
 
@@ -112,9 +113,9 @@ class PlantationController extends Controller
                 'name' => 'required',
                 'description' => 'required',
                 'cultivation' => 'required',
-                'planting_date' => 'required|date_format:Y-m-d',
-                'estimate_harvest_date' => 'required|date_format:Y-m-d',
-                'plantation_size' => 'required|decimal:2'
+                'plantingDate' => 'required|date_format:Y-m-d',
+                'estimateHarvestDate' => 'required|date_format:Y-m-d',
+                'plantationSize' => 'required|decimal:2'
             ]);
 
             if($validatePlantation->fails()){
@@ -127,9 +128,9 @@ class PlantationController extends Controller
             $plantation->name = $request->name;
             $plantation->description = $request->description;
             $plantation->cultivation = $request->cultivation;
-            $plantation->planting_date = $request->planting_date;
-            $plantation->estimate_harvest_date = $request->estimate_harvest_date;
-            $plantation->plantation_size = $request->plantation_size;
+            $plantation->plantingDate = $request->plantingDate;
+            $plantation->estimateHarvestDate = $request->estimateHarvestDate;
+            $plantation->plantationSize = $request->plantationSize;
             $plantation->save();
 
         }catch (\Throwable $th) {
@@ -140,7 +141,7 @@ class PlantationController extends Controller
 
         return response()->json([
             'message' => 'Plantação atualizada com sucesso!',
-            'object' => $plantation
+            'object' => Helpers::convertToCamelCase($plantation->toArray())
         ], 200);
     }
 
