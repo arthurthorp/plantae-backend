@@ -132,4 +132,17 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Logout User
+     * @param Request $request
+     * @return User
+     */
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        return response(null,204);
+    }
 }

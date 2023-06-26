@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Activity extends Model
 {
@@ -28,4 +29,9 @@ class Activity extends Model
         'quantity_used',
         'price'
     ];
+
+    public function plantation(): BelongsTo
+    {
+        return $this->belongsTo(Plantation::class);
+    }
 }

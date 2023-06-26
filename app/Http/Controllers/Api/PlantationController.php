@@ -128,9 +128,9 @@ class PlantationController extends Controller
             $plantation->name = $request->name;
             $plantation->description = $request->description;
             $plantation->cultivation = $request->cultivation;
-            $plantation->plantingDate = $request->plantingDate;
-            $plantation->estimateHarvestDate = $request->estimateHarvestDate;
-            $plantation->plantationSize = $request->plantationSize;
+            $plantation->planting_date = $request->plantingDate;
+            $plantation->estimate_harvest_date = $request->estimateHarvestDate;
+            $plantation->plantation_size = $request->plantationSize;
             $plantation->save();
 
         }catch (\Throwable $th) {

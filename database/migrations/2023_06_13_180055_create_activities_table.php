@@ -22,11 +22,11 @@ return new class extends Migration
             $table->unsignedBigInteger('plantation_id')->onDelete('cascade');
 
             //HARVEST
-            $table->unsignedBigInteger('agricultural_input_id')->nullable();
             $table->float('estimate_produtivity', 8, 2)->nullable();
             $table->float('real_produtivity', 8, 2)->nullable();
 
             //AGRICULTURAL_INPUT
+            $table->unsignedBigInteger('agricultural_input_id')->nullable();
             $table->float('quantity_used', 8, 2)->nullable();
 
 
