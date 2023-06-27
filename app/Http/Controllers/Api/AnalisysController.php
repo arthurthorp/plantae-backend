@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use App\Models\Activity;
 
 class AnalisysController extends Controller
@@ -41,8 +40,18 @@ class AnalisysController extends Controller
     /**
      * Relatório das atividades entregues atrasadas de uma plantação
      */
-    public function lateActivities(Request $request)
+    public function lateActivities(int $id)
     {
-        //
+        $report = Activity::where('plantation_id', $id)
+            ->where('status', 'FINISHED')
+            ->whereColumn('estimate_date', '<', 'execution_date')
+            ->select(DB::raw('COUNT(id) as quantity, ROUND(AVG(DATEDIFF(execution_date, estimate_date)),2) AS dateAverage'))
+            ->first();
+
+        $report->dateAverage = round($report->dateAverage,2);
+
+        return response()->json([
+            'object' => $report,
+        ], 200);
     }
 }

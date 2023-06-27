@@ -51,4 +51,5 @@ Route::prefix('activities')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('analysis')->middleware('auth:sanctum')->group(function () {
     Route::get('agricultural-input-expenses/{id}', [AnalisysController::class, 'agriculturalInputExpenses']);
+    Route::get('late-activities/{id}', [AnalisysController::class, 'lateActivities']);
 });
