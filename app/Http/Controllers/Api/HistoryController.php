@@ -20,7 +20,7 @@ class HistoryController extends Controller
 
         $activity = Activity::find($activityId);
 
-        $histories = $activity->histories;
+        $histories = $activity->histories()->orderBy('created_at', 'desc')->get();
 
         foreach ($histories as $history) {
             $history->getImagePath();
