@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Api\AuthController;
 use \App\Http\Controllers\Api\PlantationController;
 use \App\Http\Controllers\Api\ActivityController;
+use \App\Http\Controllers\Api\HistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,9 @@ Route::prefix('activities')->middleware('auth:sanctum')->group(function () {
     Route::middleware('owner')->put('/{id}', [ActivityController::class, 'update']);
     Route::middleware('owner')->delete('/{id}', [ActivityController::class, 'destroy']);
     Route::patch('/{id}/finish', [ActivityController::class, 'finish']);
+
+    // * Activities
+    Route::get('/{id}/histories', [HistoryController::class, 'index']);
+    Route::post('/{id}/histories', [HistoryController::class, 'store']);
+    Route::get('/{activity}/histories/{id}', [HistoryController::class, 'show']);
 });

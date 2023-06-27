@@ -35,6 +35,8 @@ return new class extends Migration
 
 
             $table->timestamps();
+            $table->foreign('charge_in')->references('id')->on('users');
+            $table->foreign('plantation_id')->references('id')->on('plantations');
         });
     }
 
