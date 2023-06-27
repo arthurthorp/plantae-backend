@@ -10,7 +10,7 @@ use App\Models\Plantation;
 use App\Models\Activity;
 use App\Helpers\Helpers;
 
-class ActitivtyController extends Controller
+class ActivityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,22 +19,27 @@ class ActitivtyController extends Controller
     {
         $plantationId = $request->query("plantation");
 
-        if(!$plantationId){
+        if($plantationId) {
+            $plantation = Plantation::find($plantationId);
+
+            if(!$plantation){
+                return response()->json([
+                    'message' => 'A plantação não existe no sistema'
+                ], 404);
+            }
+
             return response()->json([
-                'message' => 'O ID da plantação é obrigatório'
-            ], 400);
+                'objects' => Helpers::convertToCamelCase($plantation->activities->toArray()),
+            ], 200);
         }
 
-        $plantation = Plantation::find($plantationId);
-
-        if(!$plantation){
-            return response()->json([
-                'message' => 'A plantação não existe no sistema'
-            ], 404);
-        }
+        $activities = Activity::join('plantations_users', 'activities.plantation_id', '=', 'plantations_users.plantation_id')
+        ->where('plantations_users.user_id', $request->user()->id)
+        ->select('activities.*')
+        ->get();
 
         return response()->json([
-            'objects' => Helpers::convertToCamelCase($plantation->activities->toArray()),
+            'objects' => Helpers::convertToCamelCase($activities->toArray()),
         ], 200);
     }
 
@@ -48,7 +53,7 @@ class ActitivtyController extends Controller
             [
                 'description' => 'required',
                 'type' => 'required',
-                'status' => 'required|date_format:Y-m-d',
+                'status' => 'required',
                 'estimateDate' => 'required|date_format:Y-m-d',
                 'chargeIn' => 'required',
                 'plantationId' => 'required'
@@ -128,7 +133,7 @@ class ActitivtyController extends Controller
             [
                 'description' => 'required',
                 'type' => 'required',
-                'status' => 'required|date_format:Y-m-d',
+                'status' => 'required',
                 'estimateDate' => 'required|date_format:Y-m-d',
                 'chargeIn' => 'required',
                 'plantationId' => 'required'
@@ -188,14 +193,13 @@ class ActitivtyController extends Controller
         return response(null,204);
     }
 
-    //TODO
-
     public function finish(string $id)
     {
         try {
-            //obter a data da requisição
             $activity = Activity::find($id);
-            $activity->delete();
+            $activity->status = 'FINISHED';
+            $activity->execution_date = date('Y-m-d');
+            $activity->save();
 
         }catch (\Throwable $th) {
             return response()->json([
@@ -203,6 +207,9 @@ class ActitivtyController extends Controller
             ], 500);
         }
 
-        return response(null,204);
+        return response()->json([
+            'message' => 'Atividade finalizada com sucesso!',
+            'object' => Helpers::convertToCamelCase($activity->toArray())
+        ], 200);
     }
 }

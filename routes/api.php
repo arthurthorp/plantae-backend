@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Api\AuthController;
 use \App\Http\Controllers\Api\PlantationController;
-use \App\Http\Controllers\Api\ActitivtyController;
+use \App\Http\Controllers\Api\ActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,9 +34,10 @@ Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('activities')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [ActitivtyController::class, 'index']);
-    Route::middleware('owner')->post('/', [PlantationController::class, 'store']);
-    Route::get('/{id}', [PlantationController::class, 'show']);
-    Route::middleware('owner')->put('/{id}', [PlantationController::class, 'update']);
-    Route::middleware('owner')->delete('/{id}', [PlantationController::class, 'destroy']);
+    Route::get('/', [ActivityController::class, 'index']);
+    Route::middleware('owner')->post('/', [ActivityController::class, 'store']);
+    Route::get('/{id}', [ActivityController::class, 'show']);
+    Route::middleware('owner')->put('/{id}', [ActivityController::class, 'update']);
+    Route::middleware('owner')->delete('/{id}', [ActivityController::class, 'destroy']);
+    Route::patch('/{id}/finish', [ActivityController::class, 'finish']);
 });
