@@ -104,18 +104,8 @@ class ActivityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id)
+    public function show(string $id)
     {
-        $user = $request->user();
-
-        $plantation = $user->plantations()->find($id);
-
-        if(!$plantation) {
-            return response()->json([
-                'message' => "Você não possui permissão para acessar essa plantação",
-            ], 401);
-        }
-
         $activity = Activity::find($id);
 
         return response()->json([
@@ -156,7 +146,7 @@ class ActivityController extends Controller
             $activity->plantation_id = $request->plantationId;
             $activity->estimate_produtivity = $request->estimateProdutivity;
             $activity->real_produtivity = $request->realProdutivity;
-            $activity->agricultura_input_id = $request->agriculturalInputId;
+            $activity->agricultural_input_id = $request->agriculturalInputId;
             $activity->quantity_used = $request->quantityUsed;
             $activity->price = $request->price;
 
