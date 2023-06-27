@@ -83,11 +83,10 @@ class ActivityController extends Controller
                 'plantation_id' => $request->plantationId,
                 'estimate_produtivity' => $request->estimateProdutivity,
                 'real_produtivity' => $request->realProdutivity,
-                'agricultura_input_id' => $request->agriculturalInputId,
+                'agricultural_input_id' => $request->agriculturalInputId,
                 'quantity_used' => $request->quantityUsed,
                 'price' => $request->price
             ]);
-
 
         } catch(\Throwable $th) {
             return response()->json([

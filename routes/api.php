@@ -6,6 +6,7 @@ use \App\Http\Controllers\Api\AuthController;
 use \App\Http\Controllers\Api\PlantationController;
 use \App\Http\Controllers\Api\ActivityController;
 use \App\Http\Controllers\Api\HistoryController;
+use \App\Http\Controllers\Api\AnalisysController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,8 +43,12 @@ Route::prefix('activities')->middleware('auth:sanctum')->group(function () {
     Route::middleware('owner')->delete('/{id}', [ActivityController::class, 'destroy']);
     Route::patch('/{id}/finish', [ActivityController::class, 'finish']);
 
-    // * Activities
+    // * Histories
     Route::get('/{id}/histories', [HistoryController::class, 'index']);
     Route::post('/{id}/histories', [HistoryController::class, 'store']);
     Route::get('/{activity}/histories/{id}', [HistoryController::class, 'show']);
+});
+
+Route::prefix('analysis')->middleware('auth:sanctum')->group(function () {
+    Route::get('agricultural-input-expenses/{id}', [AnalisysController::class, 'agriculturalInputExpenses']);
 });
