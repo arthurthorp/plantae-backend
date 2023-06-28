@@ -99,7 +99,11 @@ class ActivityController extends Controller
      */
     public function show(string $id)
     {
-        $activity = Activity::with('user')->find($id);
+        $activity = Activity::with('user')->with('histories')->find($id);
+
+        foreach ( $activity->histories as $history) {
+            $history->getImagePath();
+        }
 
         return response()->json([
             'object' => Helpers::convertToCamelCase($activity->toArray()),
