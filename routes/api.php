@@ -40,6 +40,7 @@ Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
     Route::get('/{id}/associates', [PlantationController::class, 'associates']);
     Route::middleware('owner')->put('/{id}', [PlantationController::class, 'update']);
     Route::middleware('owner')->delete('/{id}', [PlantationController::class, 'destroy']);
+    Route::get('/{id}/activities/resume', [ActivityController::class, 'resume']);
 });
 
 Route::prefix('activities')->middleware('auth:sanctum')->group(function () {

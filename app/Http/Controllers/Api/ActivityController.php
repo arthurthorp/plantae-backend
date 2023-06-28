@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use App\Models\Plantation;
 use App\Models\Activity;
 use App\Helpers\Helpers;
@@ -109,6 +110,46 @@ class ActivityController extends Controller
 
         return response()->json([
             'object' => Helpers::convertToCamelCase($activity->toArray()),
+        ], 200);
+    }
+
+    public function resume(string $id)
+    {
+        $irrigation = Activity::where('type', 'IRRIGATION')
+            ->where('plantation_id', $id)
+            ->where('status', 'FINISHED')
+            ->select(DB::raw('id, type, execution_date'))
+            ->orderBy('execution_date', 'DESC')
+        ->first();
+
+        $input = Activity::where('type', 'AGRICULTURAL_INPUT')
+            ->where('plantation_id', $id)
+            ->where('status', 'FINISHED')
+            ->select(DB::raw('id, type, execution_date'))
+            ->orderBy('execution_date', 'DESC')
+        ->first();
+
+        $paring = Activity::where('type', 'PARING')
+            ->where('plantation_id', $id)
+            ->where('status', 'FINISHED')
+            ->select(DB::raw('id, type, execution_date'))
+            ->orderBy('execution_date', 'DESC')
+        ->first();
+
+        $list = Activity::where('status', 'FINISHED')
+            ->where('plantation_id', $id)
+            ->orderBy('execution_date', 'DESC')
+            ->select(DB::raw('id, description, type, execution_date'))
+            ->limit(10)
+        ->get();
+
+        return response()->json([
+            'object' => [
+                'irrigation' => Helpers::convertToCamelCase($irrigation ? $irrigation->toArray() : null),
+                'agricultural_input' => Helpers::convertToCamelCase($input ? $input->toArray(): null),
+                'paring' => Helpers::convertToCamelCase($paring ? $paring->toArray(): null),
+                'list' => Helpers::convertToCamelCase($list->toArray())
+            ]
         ], 200);
     }
 
