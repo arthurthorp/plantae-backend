@@ -40,4 +40,9 @@ class Activity extends Model
     {
         return $this->hasMany(History::class);
     }
+
+    public function user(): belongsTo
+    {
+        return $this->belongsTo(User::class, 'charge_in');
+    }
 }

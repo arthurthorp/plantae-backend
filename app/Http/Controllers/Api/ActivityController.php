@@ -20,20 +20,14 @@ class ActivityController extends Controller
         $plantationId = $request->query("plantation");
 
         if($plantationId) {
-            $plantation = Plantation::find($plantationId);
-
-            if(!$plantation){
-                return response()->json([
-                    'message' => 'A plantação não existe no sistema'
-                ], 404);
-            }
+            $activities = Activity::with('user')->where('plantation_id', $plantationId)->get();
 
             return response()->json([
-                'objects' => Helpers::convertToCamelCase($plantation->activities->toArray()),
+                'objects' => Helpers::convertToCamelCase($activities->toArray()),
             ], 200);
         }
 
-        $activities = Activity::join('plantations_users', 'activities.plantation_id', '=', 'plantations_users.plantation_id')
+        $activities = Activity::with('user')->join('plantations_users', 'activities.plantation_id', '=', 'plantations_users.plantation_id')
         ->where('plantations_users.user_id', $request->user()->id)
         ->select('activities.*')
         ->get();
@@ -105,7 +99,7 @@ class ActivityController extends Controller
      */
     public function show(string $id)
     {
-        $activity = Activity::find($id);
+        $activity = Activity::with('user')->find($id);
 
         return response()->json([
             'object' => Helpers::convertToCamelCase($activity->toArray()),
