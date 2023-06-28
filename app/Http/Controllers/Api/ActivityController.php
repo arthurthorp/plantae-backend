@@ -179,7 +179,7 @@ class ActivityController extends Controller
     public function finish(string $id)
     {
         try {
-            $activity = Activity::find($id);
+            $activity = Activity::with('user')->find($id);
             $activity->status = 'FINISHED';
             $activity->execution_date = date('Y-m-d');
             $activity->save();

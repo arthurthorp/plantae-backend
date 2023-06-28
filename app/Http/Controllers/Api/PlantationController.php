@@ -92,6 +92,17 @@ class PlantationController extends Controller
         ], 200);
     }
 
+    public function associates(Request $request, string $id)
+    {
+        $plantation = Plantation::find($id);
+
+        $users = $plantation->users()->where('users.is_owner', 0)->get();
+
+        return response()->json([
+            'object' => Helpers::convertToCamelCase($users->toArray()),
+        ], 200);
+    }
+
     /**
      * Update the specified resource in storage.
      */

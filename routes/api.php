@@ -34,6 +34,7 @@ Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [PlantationController::class, 'index']);
     Route::middleware('owner')->post('/', [PlantationController::class, 'store']);
     Route::get('/{id}', [PlantationController::class, 'show']);
+    Route::get('/{id}/associates', [PlantationController::class, 'associates']);
     Route::middleware('owner')->put('/{id}', [PlantationController::class, 'update']);
     Route::middleware('owner')->delete('/{id}', [PlantationController::class, 'destroy']);
 });
