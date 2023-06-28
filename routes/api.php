@@ -7,6 +7,7 @@ use \App\Http\Controllers\Api\PlantationController;
 use \App\Http\Controllers\Api\ActivityController;
 use \App\Http\Controllers\Api\HistoryController;
 use \App\Http\Controllers\Api\AnalisysController;
+use App\Helpers\Helpers;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +25,9 @@ Route::post('/auth/login', [AuthController::class, 'loginUser']);
 Route::middleware('auth:sanctum')->delete('/auth/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json([
+        'object' => Helpers::convertToCamelCase($request->user()->toArray()),
+    ], 200);
 });
 
 Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
