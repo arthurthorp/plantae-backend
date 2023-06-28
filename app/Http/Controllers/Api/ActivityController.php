@@ -24,15 +24,18 @@ class ActivityController extends Controller
         if($plantationId) {
             $activities = Activity::with('user')->where('plantation_id', $plantationId)->get();
 
-            return response()->json([
-                'objects' => Helpers::convertToCamelCase($activities->toArray()),
-            ], 200);
+        }else {
+            $activities = Activity::with('user')->join('plantations_users', 'activities.plantation_id', '=', 'plantations_users.plantation_id')
+                ->where('plantations_users.user_id', $request->user()->id)
+                ->select('activities.*')
+                ->get();
         }
 
-        $activities = Activity::with('user')->join('plantations_users', 'activities.plantation_id', '=', 'plantations_users.plantation_id')
-        ->where('plantations_users.user_id', $request->user()->id)
-        ->select('activities.*')
-        ->get();
+        foreach ( $activities as $activity) {
+            if($activity->image_path)
+                $activity->getImagePath();
+        }
+
 
         return response()->json([
             'objects' => Helpers::convertToCamelCase($activities->toArray()),
@@ -112,6 +115,9 @@ class ActivityController extends Controller
         $activity = Activity::with('user')->with(['histories' => function($query) {
             $query->orderBy('created_at', 'DESC');
         }])->find($id);
+
+        if($activity->image_path)
+            $activity->getImagePath();
 
         foreach ( $activity->histories as $history) {
             $history->getImagePath();
