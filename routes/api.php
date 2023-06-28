@@ -47,7 +47,7 @@ Route::prefix('activities')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [ActivityController::class, 'index']);
     Route::middleware('owner')->post('/', [ActivityController::class, 'store']);
     Route::get('/{id}', [ActivityController::class, 'show']);
-    Route::middleware('owner')->put('/{id}', [ActivityController::class, 'update']);
+    Route::middleware('owner')->post('/{id}', [ActivityController::class, 'update']);
     Route::middleware('owner')->delete('/{id}', [ActivityController::class, 'destroy']);
     Route::patch('/{id}/finish', [ActivityController::class, 'finish']);
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Plantation;
 use App\Models\Activity;
 use App\Helpers\Helpers;
+use Illuminate\Support\Facades\Storage;
 
 class ActivityController extends Controller
 {
@@ -82,6 +83,14 @@ class ActivityController extends Controller
                 'quantity_used' => $request->quantityUsed,
                 'price' => $request->price
             ]);
+
+            if($request->file('image')) {
+                $path = $request->file('image')->store('activity/'.$activity->id, 'public');
+                $activity->image_path = $path;
+                $activity->save();
+                $activity->getImagePath();
+            }
+
 
         } catch(\Throwable $th) {
             return response()->json([
@@ -177,6 +186,17 @@ class ActivityController extends Controller
             }
 
             $activity = Activity::find($id);
+
+            if($request->file('image')) {
+                if($activity->image_path)
+                    Storage::delete('public/'.$activity->image_path);
+
+                $path = $request->file('image')->store('activity/'.$activity->id, 'public');
+                $activity->image_path = $path;
+                $activity->save();
+                $activity->getImagePath();
+            }
+
 
             $activity->description = $request->description;
             $activity->type = $request->type;

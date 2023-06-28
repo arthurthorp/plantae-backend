@@ -31,6 +31,13 @@ class Activity extends Model
         'price'
     ];
 
+    public function getImagePath()
+    {
+        $this->image_path = asset('storage/'.$this->image_path);
+
+        return $this;
+    }
+
     public function plantation(): BelongsTo
     {
         return $this->belongsTo(Plantation::class);
