@@ -99,7 +99,9 @@ class ActivityController extends Controller
      */
     public function show(string $id)
     {
-        $activity = Activity::with('user')->with('histories')->find($id);
+        $activity = Activity::with('user')->with(['histories' => function($query) {
+            $query->orderBy('created_at', 'DESC');
+        }])->find($id);
 
         foreach ( $activity->histories as $history) {
             $history->getImagePath();
