@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Api\AuthController;
+use \App\Http\Controllers\Api\AgriculturalInputController;
 use \App\Http\Controllers\Api\PlantationController;
 use \App\Http\Controllers\Api\ActivityController;
 use \App\Http\Controllers\Api\HistoryController;
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         'object' => Helpers::convertToCamelCase($request->user()->toArray()),
     ], 200);
 });
+
+Route::get('/agricultural-inputs', [AgriculturalInputController::class, 'index']);
 
 Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [PlantationController::class, 'index']);
