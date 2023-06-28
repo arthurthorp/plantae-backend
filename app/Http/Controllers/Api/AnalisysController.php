@@ -54,4 +54,16 @@ class AnalisysController extends Controller
             'object' => $report,
         ], 200);
     }
+
+    public function finishedActivities(int $id)
+    {
+        $report = Activity::with('user')->where('plantation_id', $id)
+            ->where('status', 'FINISHED')
+            ->orderBy('execution_date', 'desc')
+            ->get();
+
+        return response()->json([
+            'objects' => $report,
+        ], 200);
+    }
 }
