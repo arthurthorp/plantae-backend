@@ -40,7 +40,6 @@ class HistoryController extends Controller
             $validateHistory = Validator::make($request->all(),
             [
                 'description' => 'required',
-                'image' => 'required'
             ]);
 
             if($validateHistory->fails()){
@@ -56,12 +55,15 @@ class HistoryController extends Controller
                 'is_impediment' => !!$request->isImpediment
             ]);
 
-            $path = $request->file('image')->store('history/'.$history->id, 'public');
+            if($request->file('image')) {
+                $path = $request->file('image')->store('history/'.$history->id, 'public');
+                $history->image_path = $path;
+                $history->save();
 
-            $history->image_path = $path;
-            $history->save();
-
-            $history->image_path = asset('storage/'.$path);
+                $history->image_path = asset('storage/'.$path);
+            }else {
+                $history->image_path = null;
+            }
 
             if($request->isImpediment) {
                 $activity = Activity::find($id);

@@ -24,7 +24,8 @@ class History extends Model
 
     public function getImagePath()
     {
-        $this->image_path = asset('storage/'.$this->image_path);
+        if($this->image_path)
+            $this->image_path = asset('storage/'.$this->image_path);
 
         return $this;
     }
