@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AgriculturalInput;
+use App\Helpers\Helpers;
 
 class AgriculturalInputController extends Controller
 {
@@ -16,7 +17,7 @@ class AgriculturalInputController extends Controller
         $inputs = AgriculturalInput::orderByRaw("FIELD(type, 'FERTILIZER','FUNGICIDE', 'HERBICIDE', 'OTHER'), name ASC")->get();
 
         return response()->json([
-            'objects' => $inputs
+            'objects' => Helpers::convertToCamelCase($inputs->toArray())
         ], 200);
     }
 
@@ -33,7 +34,11 @@ class AgriculturalInputController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $input = AgriculturalInput::find($id);
+
+        return response()->json([
+            'object' => Helpers::convertToCamelCase($input ? $input->toArray(): null)
+        ], 200);
     }
 
     /**

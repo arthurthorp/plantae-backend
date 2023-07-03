@@ -31,7 +31,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     ], 200);
 });
 
-Route::get('/agricultural-inputs', [AgriculturalInputController::class, 'index']);
+Route::get('/user/{id}', [AuthController::class, 'show']);
+
+Route::prefix('agricultural-inputs')->group(function () {
+    Route::get('/', [AgriculturalInputController::class, 'index']);
+    Route::get('/{id}', [AgriculturalInputController::class, 'show']);
+});
+
+
 
 Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [PlantationController::class, 'index']);

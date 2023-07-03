@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helpers;
 
 class AuthController extends Controller
 {
@@ -131,6 +132,20 @@ class AuthController extends Controller
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Logout User
+     * @param Request $request
+     * @return User
+     */
+    public function show(string $id)
+    {
+        $user = User::find($id);
+
+        return response()->json([
+            'object' => Helpers::convertToCamelCase($user ? $user->toArray(): null)
+        ], 200);
     }
 
     /**
