@@ -42,6 +42,26 @@ class ActivityController extends Controller
         ], 200);
     }
 
+    public function dashboard(Request $request)
+    {
+        $activities = Activity::join('plantations_users', 'activities.plantation_id', '=', 'plantations_users.plantation_id')
+            ->where('plantations_users.user_id', $request->user()->id)
+            ->where('activities.status', '<>', "FINISHED")
+            ->orderBy('activities.estimate_date', "asc")
+            ->select('activities.*')
+        ->get();
+
+        foreach ( $activities as $activity) {
+            if($activity->image_path)
+                $activity->getImagePath();
+        }
+
+
+        return response()->json([
+            'objects' => Helpers::convertToCamelCase($activities->toArray()),
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -52,6 +52,7 @@ Route::prefix('plantations')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('activities')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [ActivityController::class, 'index']);
+    Route::get('/dashboard', [ActivityController::class, 'dashboard']);
     Route::middleware('owner')->post('/', [ActivityController::class, 'store']);
     Route::get('/{id}', [ActivityController::class, 'show']);
     Route::middleware('owner')->post('/{id}', [ActivityController::class, 'update']);
