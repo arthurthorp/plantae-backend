@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agricultural_inputs', function (Blueprint $table) {
+        Schema::create('histories', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
-            $table->enum('type', ["FERTILIZER", "PESTICIDE", "FUNGICIDE", "OTHER"]);
-            $table->text("rules");
+            $table->text("description");
+            $table->text("image_path")->nullable();
+            $table->boolean("is_impediment")->default(false);
+            $table->unsignedBigInteger('activity_id')->onDelete('cascade');
+
             $table->timestamps();
+
+            $table->foreign('activity_id')->references('id')->on('activities');
         });
     }
 
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agricultural_inputs');
+        Schema::dropIfExists('histories');
     }
 };

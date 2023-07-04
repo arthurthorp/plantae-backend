@@ -18,15 +18,15 @@ return new class extends Migration
             $table->enum('status', ['PENDING', 'FORBIDDEN', 'FINISHED']);
             $table->date("estimate_date");
             $table->date("execution_date");
-            $table->unsignedBigInteger('charge_in');
-            $table->unsignedBigInteger('plantation_id');
+            $table->unsignedBigInteger('charge_in')->nullable();
+            $table->unsignedBigInteger('plantation_id')->onDelete('cascade');
 
-            //AGRICULTURAL_INPUT
-            $table->unsignedBigInteger('agricultural_input_id')->nullable();
+            //HARVEST
             $table->float('estimate_produtivity', 8, 2)->nullable();
             $table->float('real_produtivity', 8, 2)->nullable();
 
-            //colheita
+            //AGRICULTURAL_INPUT
+            $table->unsignedBigInteger('agricultural_input_id')->nullable();
             $table->float('quantity_used', 8, 2)->nullable();
 
 
@@ -35,6 +35,9 @@ return new class extends Migration
 
 
             $table->timestamps();
+            $table->foreign('charge_in')->references('id')->on('users');
+            $table->foreign('plantation_id')->references('id')->on('plantations');
+            $table->foreign('agricultural_input_id')->references('id')->on('agricultural_inputs');
         });
     }
 

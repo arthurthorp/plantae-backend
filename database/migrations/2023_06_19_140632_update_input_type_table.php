@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agricultural_inputs', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->enum('type', ["FERTILIZER", "PESTICIDE", "FUNGICIDE", "OTHER"]);
-            $table->text("rules");
-            $table->timestamps();
+        Schema::table('agricultural_inputs', function (Blueprint $table) {
+            $table->enum('type', ["FERTILIZER", "HERBICIDE", "FUNGICIDE", "OTHER"])->change();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agricultural_inputs');
+        Schema::table('agricultural_inputs', function (Blueprint $table) {
+            $table->enum('type', ["FERTILIZER", "PESTICIDE", "FUNGICIDE", "OTHER"])->change();
+        });
     }
 };

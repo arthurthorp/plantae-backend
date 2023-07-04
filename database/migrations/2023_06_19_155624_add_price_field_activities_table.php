@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('agricultural_inputs', function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->enum('type', ["FERTILIZER", "PESTICIDE", "FUNGICIDE", "OTHER"]);
-            $table->text("rules");
-            $table->timestamps();
+        Schema::table('activities', function (Blueprint $table) {
+            $table->float('price', 8, 2)->nullable();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('agricultural_inputs');
+        Schema::table('activities', function (Blueprint $table) {
+            $table->dropColumn('price');
+        });
     }
 };

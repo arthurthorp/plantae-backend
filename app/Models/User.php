@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -19,10 +21,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'surname',
         'birth_date',
         'email',
         'phone',
+        'is_owner',
         'password',
     ];
 
@@ -44,4 +46,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function plantations(): BelongsToMany
+    {
+        return $this->belongsToMany(Plantation::class, 'plantations_users');
+    }
 }

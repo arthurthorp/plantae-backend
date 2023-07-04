@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Models\Plantation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\Helpers;
 
 class AuthController extends Controller
 {
@@ -22,8 +24,7 @@ class AuthController extends Controller
             $validateUser = Validator::make($request->all(),
             [
                 'name' => 'required',
-                'surname' => 'required',
-                'birth_date' => 'required',
+                'birthDate' => 'required',
                 'phone' => 'required|unique:users,phone',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required'
@@ -31,26 +32,41 @@ class AuthController extends Controller
 
             if($validateUser->fails()){
                 return response()->json([
-                    'status' => false,
-                    'message' => 'validation error',
+                    'message' => 'Campos inválidos',
                     'errors' => $validateUser->errors()
                 ], 401);
             }
 
+            $isOwner = !$request->query("plantation");
+            $plantation = Plantation::find($request->query("plantation"));
+
+            if(!$isOwner && !$plantation){
+                return response()->json([
+                    'message' => 'Essa plantação não existe em nossos registros'
+                ], 400);
+            }
+
             $user = User::create([
                 'name' => $request->name,
-                'surname' => $request->surname,
-                'birth_date' => $request->birth_date,
+                'birth_date' => $request->birthDate,
                 'phone' => $request->phone,
                 'email' => $request->email,
-                'is_owner' => true,
+                'is_owner' => $isOwner,
                 'password' => Hash::make($request->password)
             ]);
 
+
+            if($isOwner){
+                $token = $user->createToken("API TOKEN", ['owner'])->plainTextToken;
+            }else {
+                $user->plantations()->attach($request->query("plantation"));
+                $token = $user->createToken("API TOKEN")->plainTextToken;
+            }
+
             return response()->json([
                 'message' => 'Usuário criado com sucesso!',
-                'is_owner' => true,
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'isOwner' => !$request->query("plantation"),
+                'token' => $token
             ], 200);
 
         } catch (\Throwable $th) {
@@ -76,7 +92,7 @@ class AuthController extends Controller
 
             if($validateUser->fails() || (!isset($request->email) && !isset($request->phone))){
                 return response()->json([
-                    'message' => 'validation error',
+                    'message' => 'Campos inválidos',
                     'errors' => $validateUser->errors()
                 ], 401);
             }
@@ -99,11 +115,16 @@ class AuthController extends Controller
                 $user = User::where('phone', $request->phone)->first();
             }
 
+            if($user->is_owner){
+                $token = $user->createToken("API TOKEN", ['owner'])->plainTextToken;
+            }else {
+                $token = $user->createToken("API TOKEN")->plainTextToken;
+            }
 
             return response()->json([
                 'message' => 'Usuário logado com sucesso!',
-                'is_owner' => $user->is_owner,
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'isOwner' => $user->is_owner,
+                'token' => $token
             ], 200);
 
         } catch (\Throwable $th) {
@@ -111,5 +132,32 @@ class AuthController extends Controller
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Logout User
+     * @param Request $request
+     * @return User
+     */
+    public function show(string $id)
+    {
+        $user = User::find($id);
+
+        return response()->json([
+            'object' => Helpers::convertToCamelCase($user ? $user->toArray(): null)
+        ], 200);
+    }
+
+    /**
+     * Logout User
+     * @param Request $request
+     * @return User
+     */
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens()->delete();
+
+        return response(null,204);
     }
 }
