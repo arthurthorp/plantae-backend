@@ -193,17 +193,6 @@ class ActivityController extends Controller
 
             $activity = Activity::find($id);
 
-            if($request->file('image')) {
-                if($activity->image_path)
-                    Storage::delete('public/'.$activity->image_path);
-
-                $path = $request->file('image')->store('activity/'.$activity->id, 'public');
-                $activity->image_path = $path;
-                $activity->save();
-                $activity->getImagePath();
-            }
-
-
             $activity->description = $request->description;
             $activity->type = $request->type;
             $activity->status = $request->status;
@@ -218,6 +207,15 @@ class ActivityController extends Controller
 
             $activity->save();
 
+            if($request->file('image')) {
+                if($activity->image_path)
+                    Storage::delete('public/'.$activity->image_path);
+
+                $path = $request->file('image')->store('activity/'.$activity->id, 'public');
+                $activity->image_path = $path;
+                $activity->save();
+                $activity->getImagePath();
+            }
 
         } catch(\Throwable $th) {
             return response()->json([
